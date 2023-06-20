@@ -30,7 +30,12 @@ module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => res.status(200).send({ user }))
-    .catch((err) => res.status(ERROR_DEFAULT).send({ message: `${err.message}` }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных' });
+      }
+      return res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
+    });
 };
 
 module.exports.updateUser = (req, res) => {
