@@ -1,4 +1,5 @@
 const User = require('../models/user');
+
 const {
   ERROR_INCORRECT_DATA,
   ERROR_NOT_FOUND,
@@ -16,7 +17,7 @@ module.exports.getUsersById = (req, res) => {
     .orFail()
     .then((user) => res.send({ user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         return res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных' });
       }
       if (err.name === 'DocumentNotFoundError') {
