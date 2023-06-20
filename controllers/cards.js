@@ -54,7 +54,7 @@ module.exports.likeCard = (req, res) => {
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
         res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных карточки' });
         return;
       }
