@@ -27,10 +27,9 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findOneAndRemove(req.params.cardId)
-    .orFail()
     .then((card) => res.status(200).send(card))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
         return res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных карточки' });
       }
       if (err.name === 'DocumentNotFoundError') {
@@ -54,7 +53,7 @@ module.exports.likeCard = (req, res) => {
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных карточки' });
         return;
       }
