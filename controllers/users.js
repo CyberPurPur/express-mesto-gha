@@ -1,7 +1,7 @@
 const User = require('../models/user');
 
 const {
-  ERROR_INCORRECT_DATA,
+  ERROR_BAD_REQUEST,
   ERROR_NOT_FOUND,
   ERROR_DEFAULT,
 } = require('../errors/errors');
@@ -18,7 +18,7 @@ module.exports.getUsersById = (req, res) => {
     .then((user) => res.send({ user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных' });
+        return res.status(ERROR_BAD_REQUEST).send({ message: 'Неверный формат данных' });
       }
       if (err.name === 'DocumentNotFoundError') {
         return res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с таким id не найден' });
@@ -33,7 +33,7 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.status(200).send({ user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных' });
+        return res.status(ERROR_BAD_REQUEST).send({ message: 'Неверный формат данных' });
       }
       return res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
     });
@@ -51,7 +51,7 @@ module.exports.updateUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных' });
+        return res.status(ERROR_BAD_REQUEST).send({ message: 'Неверный формат данных' });
       }
       if (err.name === 'DocumentNotFoundError') {
         return res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с таким id не найден' });
@@ -72,7 +72,7 @@ module.exports.updateAvatar = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных' });
+        return res.status(ERROR_BAD_REQUEST).send({ message: 'Неверный формат данных' });
       }
       if (err.name === 'DocumentNotFoundError') {
         return res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с таким id не найден' });
