@@ -27,10 +27,14 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findOneAndRemove(req.params.cardId)
+    .orFail()
     .then((card) => res.status(200).send(card))
     .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных' });
+      }
       if (err.name === 'DocumentNotFoundError') {
-        return res.status(ERROR_NOT_FOUND).send({ message: 'Карточка с таким id не найдена' });
+        return res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с таким id не найден' });
       }
       return res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
     });
