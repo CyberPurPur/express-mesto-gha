@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const validator = require('validator');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -16,6 +18,10 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     required: true,
+    validate: {
+      validator: (url) => validator.isURL(url),
+      message: 'Некорректная ссылка на изображение',
+    },
   },
 }, { versionKey: false });
 

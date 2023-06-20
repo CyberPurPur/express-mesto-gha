@@ -8,7 +8,9 @@ const {
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' }));
+    .catch(() => {
+      res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
+    });
 };
 
 module.exports.createCard = (req, res) => {
@@ -16,7 +18,7 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         return res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных' });
       }
       return res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
@@ -48,7 +50,7 @@ module.exports.likeCard = (req, res) => {
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных' });
         return;
       }
@@ -70,7 +72,7 @@ module.exports.dislikeCard = (req, res) => {
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных' });
         return;
       }

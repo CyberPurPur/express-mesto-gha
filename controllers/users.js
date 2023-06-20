@@ -16,7 +16,7 @@ module.exports.getUsersById = (req, res) => {
     .orFail()
     .then((user) => res.send({ user }))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         return res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных' });
       }
       if (err.name === 'DocumentNotFoundError') {
@@ -44,7 +44,7 @@ module.exports.updateUser = (req, res) => {
       res.status(200).send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         return res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных' });
       }
       if (err.name === 'DocumentNotFoundError') {
@@ -65,7 +65,7 @@ module.exports.updateAvatar = (req, res) => {
       res.status(200).send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         return res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных' });
       }
       if (err.name === 'DocumentNotFoundError') {
