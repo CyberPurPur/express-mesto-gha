@@ -43,16 +43,18 @@ module.exports.likeCard = (req, res) => {
     { new: true },
   )
     .then((card) => {
-      res.status(200).send({ data: card });
+      if (!card) {
+        res.status(ERROR_NOT_FOUND).send({ message: 'Карточка с таким id не найдена' });
+        return;
+      }
+      res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
-        return res.status(ERROR_NOT_FOUND).send({ message: 'Карточка с таким id не найдена' });
+      if (err.name === 'CastError') {
+        res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных' });
+        return;
       }
-      if (err.name === 'ValidationError') {
-        return res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных' });
-      }
-      return res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
+      res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -63,15 +65,17 @@ module.exports.dislikeCard = (req, res) => {
     { new: true },
   )
     .then((card) => {
-      res.status(200).send({ data: card });
-    })
-    .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
+      if (!card) {
         return res.status(ERROR_NOT_FOUND).send({ message: 'Карточка с таким id не найдена' });
       }
-      if (err.name === 'ValidationError') {
-        return res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных' });
+
+      return res.send({ data: card });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
+        res.status(ERROR_INCORRECT_DATA).send({ message: 'Неверный формат данных' });
+        return;
       }
-      return res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
+      res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
     });
 };
