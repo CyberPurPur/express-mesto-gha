@@ -3,6 +3,7 @@ const {
   ERROR_BAD_REQUEST,
   ERROR_NOT_FOUND,
   ERROR_DEFAULT,
+  ERROR_FORBIDDEN,
 } = require('../errors/errors');
 
 module.exports.getCards = (req, res) => {
@@ -26,10 +27,13 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .orFail()
     .then((card) => {
-      res.send({ data: card });
+      if (String(card.owner) !== String(req.user._id)) {
+        return res.status(ERROR_FORBIDDEN).send({ message: 'Недостаточно прав для удаления карточки' });
+      }
+      return card.deleteOne();
     })
     .catch((err) => {
       if (err.name === 'CastError') {

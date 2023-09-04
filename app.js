@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
 
 const helmet = require('helmet');
 
@@ -7,7 +8,9 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 app.use(helmet());
+const { createUser, login } = require('./controllers/users');
 const router = require('./routes/router');
+const authMiddleware = require('./middlewares/auth');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -22,15 +25,12 @@ mongoose
     console.log(err);
   });
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '648d53420f96ead783d9da50',
-  };
-  next();
-});
+app.post('/signin', login);
+app.post('/signup', createUser);
+app.use(authMiddleware);
 
 app.use(router);
-
+app.use(errors({ message: 'Ошибка валидации Joi!' }));
 app.listen(PORT, () => {
   console.log(`app listening to port ${PORT}`);
 });

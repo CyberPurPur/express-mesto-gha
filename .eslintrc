@@ -9,6 +9,7 @@
         ]
       }
     ],
+    "import/no-extraneous-dependencies": true,
     "no-console": "off"
   }
 }
