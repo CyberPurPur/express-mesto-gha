@@ -8,6 +8,6 @@ usersRouter.get('/', getUsers);
 usersRouter.get('/:userId', getUsersById);
 usersRouter.patch('/me', updateUser);
 usersRouter.patch('/me/avatar', updateAvatar);
-usersRouter.get('/me', getCurrentUser);
+usersRouter.get('users/me', getCurrentUser);
 
 module.exports = usersRouter;
