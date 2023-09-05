@@ -6,6 +6,7 @@ const { createUser, login } = require('./controllers/users');
 const router = require('./routes/router');
 const { createUserJoi, loginUserJoi } = require('./middlewares/JoiValidation');
 const authMiddleware = require('./middlewares/auth');
+
 const app = express();
 
 app.use(helmet());

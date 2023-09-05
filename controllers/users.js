@@ -22,13 +22,12 @@ module.exports.login = (req, res) => {
           if (!matched) {
             return res.status(ERROR_UNAUTHORISED).send({ message: 'Неправильные почта или пароль' });
           }
-          const token = jwt.sign({ _id: user._id });
-
+          const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
           res.cookie('jwt', token, {
             httpOnly: true,
             maxAge: 604800000,
           });
-          return res.status(200).send({ message: 'Авторизация прошла успешно' });
+          return res.send({ message: 'Авторизация прошла успешно' });
         });
     })
     .catch(() => res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' }));
