@@ -36,7 +36,7 @@ module.exports.login = (req, res) => {
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
+    .then((users) => res.send(users))
     .catch(() => res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' }));
 };
 
