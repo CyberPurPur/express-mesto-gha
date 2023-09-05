@@ -5,7 +5,7 @@ const {
 } = require('../controllers/users');
 const { getUserByIdJoi, updateAvatarJoi, updateUserJoi } = require('../middlewares/JoiValidation');
 
-usersRouter.get('', getUsers);
+usersRouter.get('/', getUsers);
 usersRouter.get('/:userId', getUserByIdJoi, getUsersById);
 usersRouter.patch('/me', updateUserJoi, updateUser);
 usersRouter.patch('/me/avatar', updateAvatarJoi, updateAvatar);

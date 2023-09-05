@@ -1,6 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
+// eslint-disable-next-line import/no-unresolved
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const { createUser, login } = require('./controllers/users');
 const router = require('./routes/router');
@@ -12,7 +15,9 @@ const app = express();
 app.use(helmet());
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 mongoose
   .connect('mongodb://localhost:27017/mestodb', {
     useNewUrlParser: true,
