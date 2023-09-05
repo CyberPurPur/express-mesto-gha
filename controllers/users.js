@@ -28,7 +28,7 @@ module.exports.login = (req, res) => {
             httpOnly: true,
             maxAge: 604800000,
           });
-          return res.send({ message: 'Авторизация прошла успешно' });
+          return res.status(201).send({ message: 'Авторизация прошла успешно' });
         });
     })
     .catch(() => res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' }));
@@ -62,7 +62,10 @@ module.exports.createUser = (req, res) => {
   User.create({
     name, about, avatar, email, password,
   })
-    .then((user) => res.status(201).send({ user }))
+    .then((user) => {
+      const deletePasswordUser = user.toObject({ useProjection: true });
+      return res.send(deletePasswordUser);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(ERROR_BAD_REQUEST).send({ message: 'Неверный формат данных' });
@@ -119,7 +122,10 @@ module.exports.updateAvatar = (req, res) => {
 module.exports.getCurrentUser = (req, res) => {
   User.findById(req.user._id)
     .orFail()
-    .then((user) => res.send(user))
+    .then((user) => {
+      const deletePasswordUser = user.toObject({ useProjection: true });
+      return res.send(deletePasswordUser);
+    })
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
         return res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с таким id не найден' });
