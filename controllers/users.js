@@ -28,7 +28,7 @@ module.exports.login = (req, res) => {
             httpOnly: true,
             maxAge: 604800000,
           });
-          return res.status(201).send({ message: 'Авторизация прошла успешно' });
+          return res.status(200).send({ message: 'Авторизация прошла успешно' });
         });
     })
     .catch(() => res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' }));
@@ -70,7 +70,7 @@ module.exports.createUser = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(ERROR_BAD_REQUEST).send({ message: 'Неверный формат данных' });
       }
-      if (err.name === 11000) {
+      if (err.code === 11000) {
         return res.status(ERROR_CONFLICT).send({ message: 'Пользователь с такой почтой уже зарегистрирован' });
       }
       return res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
@@ -124,7 +124,7 @@ module.exports.getCurrentUser = (req, res) => {
     .orFail()
     .then((user) => {
       const deletePasswordUser = user.toObject({ useProjection: true });
-      return res.send(deletePasswordUser);
+      return res.status(200).send(deletePasswordUser);
     })
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
