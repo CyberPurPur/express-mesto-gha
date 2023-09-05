@@ -7,8 +7,8 @@ const {
 } = require('../errors/errors');
 
 module.exports.getCards = (req, res) => {
-  Card.find({})
-    .then((cards) => res.send({ data: cards }))
+  Card.find({}).populate(['owner', 'likes'])
+    .then((cards) => res.status(200).send(cards))
     .catch(() => {
       res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
     });
@@ -17,7 +17,7 @@ module.exports.getCards = (req, res) => {
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.status(201).send({ data: card }))
+    .then((card) => res.status(201).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(ERROR_BAD_REQUEST).send({ message: 'Неверный формат данных карточки' });
@@ -35,6 +35,7 @@ module.exports.deleteCard = (req, res) => {
       }
       return card.deleteOne();
     })
+    .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err.name === 'CastError') {
         return res.status(ERROR_BAD_REQUEST).send({ message: 'Неверный формат данных карточки' });
@@ -52,12 +53,13 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .orFail()
     .then((card) => {
       if (!card) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Карточка с таким id не найдена' });
         return;
       }
-      res.send({ data: card });
+      res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -74,12 +76,13 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .orFail()
     .then((card) => {
       if (!card) {
         return res.status(ERROR_NOT_FOUND).send({ message: 'Карточка с таким id не найдена' });
       }
 
-      return res.send({ data: card });
+      return res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
